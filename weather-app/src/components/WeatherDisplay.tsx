@@ -8,12 +8,19 @@ import { RiLoader2Fill } from "react-icons/ri";
 import React from 'react';
 import { WeatherDisplayWrapper } from './Weather.module';
 import { WeatherDataInterface } from '../services/Weather';
-import { fetchCurrentWeather, fetchWeatherData } from '../services/WeatherService';
+import { fetchCurrentWeather, fetchWeatherData, fetchHourlyWeatherData } from '../services/WeatherService';
 import { iconChanger } from './WeatherIcon';
 import { SearchBar } from './SearchBar';
 // import { AlertComponent } from './Alert';
 
+// Soner library for toast notifications
+import { Toaster, toast } from 'sonner';
 
+// React component to display graphical representation of the weather
+import { WeatherGraph } from './WeatherGraph';
+
+// React component to display the map of the city
+// import { WeatherMap } from './WeatherMap';
 
 export const WeatherDisplay = () => {
 
@@ -24,7 +31,7 @@ export const WeatherDisplay = () => {
     // Create a loading state to show a loader while fetching the data
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     // Create a state to store the error message
-    const [errorMessage, setErrrorMessage] = React.useState<string>("");
+    const [hourlyData, setHourlyData] = React.useState<Array< { dt: number, temp: number } > | null>(null);
 
     // Handels the search functionality when the user enters a city name in the input field
     const handleSearch = async () => {
@@ -38,18 +45,32 @@ export const WeatherDisplay = () => {
         try {
           const { currentWeatherData } = await fetchWeatherData(searchCity);
           setWeatherData(currentWeatherData);
+
+          // Fetch the hourly weather data for the next 24 hours
+          const hourlyData = await fetchHourlyWeatherData(currentWeatherData.coord.lat, currentWeatherData.coord.lon);
+          setHourlyData(hourlyData);
+
         } catch (error: any) {
-            alert("City not found");
+            // If the city is not found, show a toast notification
+            toast.error("City not found");
+            
         }
     };
 
-
+    // Use React.useEffect to fetch the weather data when the component mounts
     React.useEffect(() => {
       const fetchData = async () => {
         navigator.geolocation.getCurrentPosition(async (position) => {
-          const { latitude, longitude } = position.coords;
-          const [currentWeather] = await Promise.all([fetchCurrentWeather(latitude, longitude)]);
-          setWeatherData(currentWeather);
+            const { latitude, longitude } = position.coords;
+
+            // Fetch the current weather data for the user's location
+            const [currentWeather] = await Promise.all([fetchCurrentWeather(latitude, longitude)]);
+            setWeatherData(currentWeather);
+
+            // Fetch the hourly weather data for the next 24 hours
+            //   const hourlyData = await fetchHourlyWeatherData(latitude, longitude);
+            //   setHourlyData(hourlyData);
+
           setIsLoading(true);
         });
       };
@@ -65,7 +86,7 @@ export const WeatherDisplay = () => {
 
             <WeatherDisplayWrapper>
 
-                {/* errorMessage && <AlertComponent /> */}
+                <Toaster position='top-center' /> {/* Ypu can use richColor, position, and duration props */}
 
                 <div className="container">
 
@@ -101,6 +122,24 @@ export const WeatherDisplay = () => {
                                     </div>
                                 </div>
                             </div>
+
+
+                            {/* Weather graph to display the hourly weather data *
+                            {hourlyData && (
+                                <div className='weatherGraphArea'>
+                                    <WeatherGraph hourlyData={hourlyData.slice(0, 24)} />
+                                </div>
+                            )}
+
+                            Weather map to display the map of the city
+                            {weatherData && (
+                            <div className="mapArea">
+                                <h3>{`Map of ${weatherData.name}`}</h3>
+                                <WeatherMap lat={weatherData.coord.lat} lon={weatherData.coord.lon} city={weatherData.name} />
+                            </div>
+                            )}
+                            */}
+
 
                         </> ) : (
 

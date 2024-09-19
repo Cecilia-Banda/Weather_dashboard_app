@@ -19,5 +19,9 @@ export interface WeatherDataInterface {
             icon: string;
         }
     ];
+    coord: {
+        lon: number;
+        lat: number;
+    };
     
 }

@@ -27,3 +27,12 @@ export const fetchWeatherData = async (city: string) => {
     throw error;
   }
 };
+
+// Function to fetch the weather data for the next 24 hours
+export const fetchHourlyWeatherData = async (lat: number, lon: number) => {
+  // Use OpenWeatherMap's One Call API to fetch hourly weather data
+  const url = `${api_base}onecall?lat=${lat}&lon=${lon}&exclude=current,minutely,daily&appid=${api_key}&units=metric`;
+  const response = await axios.get(url);
+  return response.data.hourly;
+}
+
