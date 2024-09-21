@@ -2,14 +2,15 @@ import styled from "styled-components";
 
 
 export const WeatherDisplayWrapper = styled.div`
-    height: 100vh;
-    background: linear-gradient(to right, #e0eafc, #e0eafc, #cfdef3, #e0eafc);
+    background: white;
     font-family: 'Roboto', sans-serif;
+    height: 150vh;
+    margin: 20px;
 
     .container {
-        background-color: #ffffff7d;
+        background: linear-gradient(90deg, #e8f0f2 0%, #f9f9f9 100%);
         border-radius: 12px;
-        padding: 4rem;
+        padding: 2vh 2vw;
         position: absolute;
         top: 50%;
         left: 50%;
@@ -22,6 +23,10 @@ export const WeatherDisplayWrapper = styled.div`
         justify-content: space-between;
         align-items: center;
         flex-direction: column;
+        z-index: 999;
+        /* add a shadow to the container and background gradient */
+        box-shadow: 0 10px 15px rgb(0 0 0 / 50%);
+
     }
 
     .searchArea {
@@ -141,4 +146,30 @@ export const WeatherDisplayWrapper = styled.div`
             transform: rotate(360deg);
         }
     }
+
+    .dropbtn {
+        background-color: #073b4c;
+        color: white;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        margin: 30px 20px;
+    }
+
+    .weather-detail {
+        margin-top: 20px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        padding: 20px;
+    }
+
+    .weather-detail h3 {
+        margin-bottom: 10px;
+        font-size: 20px;
+        font-weight: 500;
+        padding: 15px;
+    }
+
 `;

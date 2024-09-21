@@ -11,16 +11,13 @@ import { WeatherDataInterface } from '../services/Weather';
 import { fetchCurrentWeather, fetchWeatherData, fetchHourlyWeatherData } from '../services/WeatherService';
 import { iconChanger } from './WeatherIcon';
 import { SearchBar } from './SearchBar';
-// import { AlertComponent } from './Alert';
 
 // Soner library for toast notifications
 import { Toaster, toast } from 'sonner';
 
-// React component to display graphical representation of the weather
-import { WeatherGraph } from './WeatherGraph';
+import { WeatherDetail } from './WeatherGraph';
+import { CityMap } from './WeatherMap';
 
-// React component to display the map of the city
-// import { WeatherMap } from './WeatherMap';
 
 export const WeatherDisplay = () => {
 
@@ -30,9 +27,10 @@ export const WeatherDisplay = () => {
     const [searchCity, setSearchCity] = React.useState<string>("");
     // Create a loading state to show a loader while fetching the data
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    // Create a state to store the error message
-    const [hourlyData, setHourlyData] = React.useState<Array< { dt: number, temp: number } > | null>(null);
-
+    // Track if the details are visible or not
+    const [showDetails, setShowDetails] = React.useState(false);
+  
+    
     // Handels the search functionality when the user enters a city name in the input field
     const handleSearch = async () => {
 
@@ -46,9 +44,7 @@ export const WeatherDisplay = () => {
           const { currentWeatherData } = await fetchWeatherData(searchCity);
           setWeatherData(currentWeatherData);
 
-          // Fetch the hourly weather data for the next 24 hours
-          const hourlyData = await fetchHourlyWeatherData(currentWeatherData.coord.lat, currentWeatherData.coord.lon);
-          setHourlyData(hourlyData);
+                  
 
         } catch (error: any) {
             // If the city is not found, show a toast notification
@@ -56,6 +52,13 @@ export const WeatherDisplay = () => {
             
         }
     };
+
+
+    // Toggle the visibility of the dropdown button
+    const toggleDetails = () => {
+        setShowDetails(!showDetails); // Toggle the visibility of the dropdown
+    };
+
 
     // Use React.useEffect to fetch the weather data when the component mounts
     React.useEffect(() => {
@@ -76,7 +79,7 @@ export const WeatherDisplay = () => {
       };
   
       fetchData();
-    }, [fetchCurrentWeather]);
+    }, []);
   
 
 
@@ -105,6 +108,8 @@ export const WeatherDisplay = () => {
                                 <h2>{weatherData.weather[0].main}</h2>
                             </div>
 
+                            
+
                             <div className="bottomInfoArea">
                                 <div className="humidityLevel">
                                     <WiHumidity className="humidityIcon" />
@@ -123,22 +128,19 @@ export const WeatherDisplay = () => {
                                 </div>
                             </div>
 
+                            {/* Button to toggle weather details */}
+                            <button className="dropbtn" onClick={toggleDetails}>
+                                {showDetails ? "Hide Weather Details" : "Show Weather Details"}
+                            </button>
 
-                            {/* Weather graph to display the hourly weather data *
-                            {hourlyData && (
-                                <div className='weatherGraphArea'>
-                                    <WeatherGraph hourlyData={hourlyData.slice(0, 24)} />
-                                </div>
+                            {/* Dropdown for weather details */}
+                            {showDetails && (
+                                <>
+                                    <WeatherDetail weatherData={weatherData} />
+                                    <CityMap lat={weatherData.coord.lat} lon={weatherData.coord.lon} name={weatherData.name} />
+                                </>
                             )}
 
-                            Weather map to display the map of the city
-                            {weatherData && (
-                            <div className="mapArea">
-                                <h3>{`Map of ${weatherData.name}`}</h3>
-                                <WeatherMap lat={weatherData.coord.lat} lon={weatherData.coord.lon} city={weatherData.name} />
-                            </div>
-                            )}
-                            */}
 
 
                         </> ) : (

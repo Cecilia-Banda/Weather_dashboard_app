@@ -23,5 +23,6 @@ export interface WeatherDataInterface {
         lon: number;
         lat: number;
     };
+    hourly: Array<{ dt: number; temp: number }>;
     
 }

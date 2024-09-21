@@ -1,42 +1,41 @@
-// Show detailed weather information, including maps and graphical representations of 
-// temperature changes over the next 24 hours (use any free graph library).
-
 import React from 'react';
-import { fetchHourlyWeatherData } from '../services/WeatherService';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { WeatherDataInterface } from '../services/Weather';
 
-
-interface WeatherGraphInterface {
-    hourlyData: Array< { dt: number, temp: number } >;
+interface WeatherDetailProps {
+  weatherData: WeatherDataInterface;
 }
 
-export const WeatherGraph: React.FC<WeatherGraphInterface> = ({ hourlyData }) => {
+export const WeatherDetail: React.FC<WeatherDetailProps> = ({ weatherData }) => {
+  // Convert UNIX timestamp to a readable time format
+  const formatTime = (timestamp: number) => {
+    const date = new Date(timestamp * 1000);
+    return `${date.getHours()}:00`;
+  };
 
-    {/* Format the data to show the temperature for each hour */}
-    const formattedData = hourlyData.map((data) => {
-        return {
-            time: new Date(data.dt * 1000).getHours(),
-            temperature: data.temp
-        };
-    });
+  // Use the hourly data or provide an empty array if it's not available
+  const hourlyData = weatherData.hourly ?? [];
 
-    return (
-        <ResponsiveContainer width="100%" height={300}>
-            <LineChart
-                data={formattedData}
-                margin={{
-                    top: 5,
-                    right: 20,
-                    left: 10,
-                    bottom: 5,
-                }}
-            >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="time" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="temperature" stroke="#8884d8" activeDot={{ r: 8 }} />
+  return (
+    <div className="weather-detail">
+      <h2>Weather Details for {weatherData.name}</h2>
+
+      <div className="temperature-graph" style={{ height: '350px' }}>
+        <h3>Temperature Changes (Next 24 Hours)</h3>
+        {hourlyData.length > 0 ? (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={hourlyData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="dt" tickFormatter={formatTime} />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="temp" stroke="#8884d8" activeDot={{ r: 8 }} />
             </LineChart>
-        </ResponsiveContainer>
-    );
-}
+          </ResponsiveContainer>
+        ) : (
+          <p>Loading hourly data...</p> // This can be replaced with a loader or another message if preferred
+        )}
+      </div>
+    </div>
+  );
+};
