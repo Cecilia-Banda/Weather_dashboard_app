@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { WeatherDataInterface } from '../services/Weather';
 
@@ -13,11 +13,16 @@ export const WeatherDetail: React.FC<WeatherDetailProps> = ({ weatherData }) => 
     return `${date.getHours()}:00`;
   };
 
-  // Use the hourly data or provide an empty array if it's not available
+  // Ensure hourlyData is properly set
   const hourlyData = weatherData.hourly ?? [];
 
+  // Debugging: Log the hourly data to ensure it's coming through correctly
+  useEffect(() => {
+    console.log('Hourly Data:', hourlyData);
+  }, [hourlyData]);
+
   return (
-    <div className="weather-detail">
+    <div className="weather-detail" style={{ padding: '20px', width: '100%', boxSizing: 'border-box' }}>
       <h2>Weather Details for {weatherData.name}</h2>
 
       <div className="temperature-graph" style={{ height: '350px' }}>
@@ -33,7 +38,7 @@ export const WeatherDetail: React.FC<WeatherDetailProps> = ({ weatherData }) => 
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <p>Loading hourly data...</p> // This can be replaced with a loader or another message if preferred
+          <p>Loading hourly data...</p>
         )}
       </div>
     </div>
