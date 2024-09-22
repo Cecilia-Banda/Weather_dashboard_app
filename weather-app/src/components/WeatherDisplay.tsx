@@ -11,6 +11,8 @@ import { WeatherDataInterface } from '../services/Weather';
 import { fetchCurrentWeather, fetchWeatherData, fetchHourlyWeatherData } from '../services/WeatherService';
 import { iconChanger } from './WeatherIcon';
 import { SearchBar } from './SearchBar';
+import { Footer } from './Footer';
+import { Header } from './Header';
 
 // Soner library for toast notifications
 import { Toaster, toast } from 'sonner';
@@ -91,7 +93,11 @@ export const WeatherDisplay = () => {
 
                 <Toaster position='top-center' /> {/* Ypu can use richColor, position, and duration props */}
 
-                <div className="container">
+                <Header />
+
+                <div className="container" style={{
+                    top: showDetails ? '106%' : '50%'  // Conditional change of top property
+                }}>
 
                     <SearchBar searchCity={searchCity} setSearchCity={setSearchCity} handleSearch={handleSearch} />
 
@@ -156,6 +162,8 @@ export const WeatherDisplay = () => {
                     }
 
                 </div>
+
+                <Footer />
 
             </WeatherDisplayWrapper>
 
