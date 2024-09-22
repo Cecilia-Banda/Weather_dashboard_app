@@ -25,7 +25,7 @@ export const WeatherDetail: React.FC<WeatherDetailProps> = ({ weatherData }) => 
     <div className="weather-detail" style={{ padding: '20px', width: '100%', boxSizing: 'border-box' }}>
       <h2>Weather Details for {weatherData.name}</h2>
 
-      <div className="temperature-graph" style={{ height: '350px' }}>
+      <div className="temperature-graph" style={{ height: '400px', width: '400px'}}>
         <h3>Temperature Changes (Next 24 Hours)</h3>
         {hourlyData.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>

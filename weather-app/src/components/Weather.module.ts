@@ -156,6 +156,7 @@ export const WeatherDisplayWrapper = styled.div`
         border: none;
         cursor: pointer;
         margin: 30px 20px;
+        z-index: 1000;
     }
 
     .weather-detail {

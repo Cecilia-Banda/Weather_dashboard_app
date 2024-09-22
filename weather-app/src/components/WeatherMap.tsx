@@ -12,7 +12,7 @@ const locationIcon = L.icon({
 
 export const CityMap = ({ lat, lon, name }: { lat: number; lon: number; name: string }) => {
   return (
-    <div style={{ padding: '40px', width: '100%' }}>
+    <div style={{ padding: '20px', width: '100%' }}>
       <MapContainer
         center={[lat, lon]}
         zoom={13}
