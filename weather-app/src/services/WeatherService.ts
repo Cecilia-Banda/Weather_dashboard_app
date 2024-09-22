@@ -4,7 +4,7 @@ import axios from 'axios';
 import { WeatherDataInterface } from './Weather';
 
 
-const api_key = "0cc86d16bf572f78cdc96c096c7627e5";
+const api_key = process.env.REACT_APP_OPEN_WEATHER_API;
 const api_base = "https://api.openweathermap.org/data/2.5/";
 
 // Function to fetch the current weather data using user's location
