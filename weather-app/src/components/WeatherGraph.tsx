@@ -1,46 +1,74 @@
-import React, { useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { WeatherDataInterface } from '../services/Weather';
+import React from 'react';
+import { Line } from 'react-chartjs-2';
+import 'chart.js/auto';
+import { HourlyWeatherData } from '../services/Weather';
 
-interface WeatherDetailProps {
-  weatherData: WeatherDataInterface;
+interface WeatherGraphProps {
+  hourlyData: HourlyWeatherData[];
 }
 
-export const WeatherDetail: React.FC<WeatherDetailProps> = ({ weatherData }) => {
-  // Convert UNIX timestamp to a readable time format
-  const formatTime = (timestamp: number) => {
-    const date = new Date(timestamp * 1000);
-    return `${date.getHours()}:00`;
+export const WeatherGraph: React.FC<WeatherGraphProps> = ({ hourlyData }) => {
+  // Check if hourlyData is sorted by date-time
+  const sortedData = hourlyData.sort((a, b) => new Date(a.dt_txt).getTime() - new Date(b.dt_txt).getTime());
+
+  // Log data to check if it's in the right order
+  console.log('Sorted hourly data:', sortedData);
+
+  const formatTime = (dt_txt: string) => {
+    const date = new Date(dt_txt);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Format as "HH:MM"
   };
 
-  // Ensure hourlyData is properly set
-  const hourlyData = weatherData.hourly ?? [];
+  // Data for the Line chart
+  const data = {
+    labels: sortedData.map((data) => formatTime(data.dt_txt)), // Format time only
+    datasets: [
+      {
+        label: 'Average Temperature (°C)',
+        data: sortedData.map((data) => data.temp), // Temp data from sorted hourlyData
+        fill: false,
+        backgroundColor: 'rgba(54,162,175,0.2)', // Teal background color
+        borderColor: 'rgba(54,162,175,1)',       // Teal border color
+        tension: 0.1,
+      },
+    ],
+  };
 
-  // Debugging: Log the hourly data to ensure it's coming through correctly
-  useEffect(() => {
-    console.log('Hourly Data:', hourlyData);
-  }, [hourlyData]);
+  // Styling options for the Line chart
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false, // Allows for resizing
+    aspectRatio: 1.5, // Increase this to make the graph bigger
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Time',
+        },
+        ticks: {
+          autoSkip: true,
+          maxTicksLimit: 10,
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Temperature (°C)',
+        },
+        beginAtZero: false,
+      },
+    },
+  };
 
   return (
-    <div className="weather-detail" style={{ padding: '20px', width: '100%', boxSizing: 'border-box' }}>
-      <h2>Weather Details for {weatherData.name}</h2>
-
-      <div className="temperature-graph" style={{ height: '400px', width: '400px'}}>
-        <h3>Temperature Changes (Next 24 Hours)</h3>
-        {hourlyData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={hourlyData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="dt" tickFormatter={formatTime} />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="temp" stroke="#8884d8" activeDot={{ r: 8 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        ) : (
-          <p>Loading hourly data...</p>
-        )}
-      </div>
+    <div style={{ 
+      width: '80%',
+      height: '400px',
+      paddingBottom: '20px',
+      margin: 'auto',
+      paddingTop: '20px',
+       }}>
+      <Line data={data} options={options} />
     </div>
   );
 };
